@@ -9,7 +9,7 @@ CWD=$(sed 's/.\{4\}$//' <<< "$CWD")
 cd "$CWD"
 
 echo "stopping container"
-./stop.cmd
+bin/stop.cmd
 
 LATEST_TAG=$(git ls-remote --tags --refs git@gitlab.orangehive.de:orangehive/docker-proxy.git | awk -F/ ' { print $3 }' | sed "s/release-//" | sort -t. -s -k 1,1n -k 2,2n -k 3,3n | tail -n 1)
 
@@ -60,7 +60,7 @@ SET CWD=%CWD:~0,-5%
 cd "%CWD%"
 
 echo stopping container
-stop.cmd
+bin/stop.cmd
 
 for /f "usebackq delims=" %%v in (`powershell.exe "& { (git ls-remote --tags --refs git@gitlab.orangehive.de:orangehive/docker-proxy.git | Out-String).toString() -replace '.*refs/tags/release-','' -split '\n' | Where-object{$_} | Sort-Object { [regex]::Replace($_, '\d+', { $args[0].Value.PadLeft(20) }) } | Select-Object -Last 1 }"`) DO set "LATEST_TAG=%%v"
 
