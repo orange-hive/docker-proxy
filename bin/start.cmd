@@ -22,8 +22,6 @@ loadENV() {
 }
 loadENV
 
-echo $PROXY_PORT
-
 printf "updating container images if needed ...\n"
 docker-compose -f docker-data/config/docker-compose.yml pull | grep '^Status'
 
