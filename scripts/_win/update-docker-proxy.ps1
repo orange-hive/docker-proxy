@@ -42,7 +42,7 @@ if ($CURRENT_VERSION -eq $LATEST_TAG) {
             Remove-Item -Recurse -Force "$env:CWD\scripts"
         }
         robocopy "$env:CWD\.docker-update" "$env:CWD" *.* /s /e > nul 2>&1
-        rRemove-Item -Recurse -Force "$env:CWD\.docker-update"
+        Remove-Item -Recurse -Force "$env:CWD\.docker-update"
         Set-Content -Path "$env:CWD\.version" -Value "$LATEST_TAG"
         Write-Host "`nPlease compare your .env file with the .env-dist file to add new or changed entries and look into the config-dist folder also."
     } else {
