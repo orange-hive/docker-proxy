@@ -1,0 +1,7 @@
+version: '2'
+services:
+  logger:
+    image: svenwltr/console-gelf-server
+    ports:
+      - "12201:12201/udp"
+

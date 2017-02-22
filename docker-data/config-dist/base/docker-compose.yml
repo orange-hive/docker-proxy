@@ -3,44 +3,38 @@ services:
   nginx:
     image: jwilder/nginx-proxy
     container_name: nginx-proxy
+    depends_on:
+      - logger
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock:ro"
-      - "../volumes/nginx/docker_proxy.conf:/etc/nginx/conf.d/docker_proxy.conf:ro"
-      - "../volumes/nginx/docker-ui.local.orangehive.de_location:/etc/nginx/vhost.d/docker-ui.local.orangehive.de_location:ro"
+      - "../container/nginx/docker_proxy.conf:/etc/nginx/conf.d/docker_proxy.conf:ro"
+      - "../container/nginx/docker-ui.local.orangehive.de_location:/etc/nginx/vhost.d/docker-ui.local.orangehive.de_location:ro"
     ports:
       - "${PROXY_PORT}:80"
     networks:
       - "frontend-tier"
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://localhost:12201"
-        tag: "nginx-proxy"
 
   ui:
     image: uifd/ui-for-docker
     container_name: ui-for-docker
+    depends_on:
+      - logger
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
       VIRTUAL_PORT: 9000
-      VIRTUAL_HOST: docker-ui.local.orangehive.de
+      VIRTUAL_HOST: docker-ui.${BASE_DOMAIN}
     networks:
       - "frontend-tier"
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://localhost:12201"
-        tag: "docker-ui"
 
-  graylog:
+  logger:
     image: graylog2/allinone
-    container_name: graylog
+    container_name: logger
     ports:
       - "12201:12201/udp"
     environment:
       VIRTUAL_PORT: 9000
-      VIRTUAL_HOST: graylog.local.orangehive.de
+      VIRTUAL_HOST: graylog.${BASE_DOMAIN}
       GRAYLOG_PASSWORD: ${GRAYLOG_ADMIN_PASSWORD}
     networks:
       - "frontend-tier"
