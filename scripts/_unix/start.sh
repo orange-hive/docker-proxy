@@ -25,7 +25,7 @@ printf "updating container images if needed ...\n"
 docker-compose -f docker-data/config/base/docker-compose.yml $ADDITIONAL_CONFIGFILE pull | grep '^Status'
 
 printf "\nstarting proxy ...\n"
-docker-compose -f docker-data/config/base/docker-compose.yml $ADDITIONAL_CONFIGFILE up -d
+docker-compose -p proxy -f docker-data/config/base/docker-compose.yml $ADDITIONAL_CONFIGFILE up -d
 
 printf "done\n\n"
 

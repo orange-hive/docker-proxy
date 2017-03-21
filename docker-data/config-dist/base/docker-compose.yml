@@ -3,8 +3,6 @@ services:
   nginx:
     image: jwilder/nginx-proxy
     container_name: nginx-proxy
-    depends_on:
-      - logger
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock:ro"
       - "../container/nginx/docker_proxy.conf:/etc/nginx/conf.d/docker_proxy.conf:ro"
@@ -17,8 +15,6 @@ services:
   ui:
     image: uifd/ui-for-docker
     container_name: ui-for-docker
-    depends_on:
-      - logger
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
@@ -27,20 +23,61 @@ services:
     networks:
       - "frontend-tier"
 
-  logger:
-    image: graylog2/allinone
-    container_name: logger
+  elk-elasticsearch:
+    image: "docker.elastic.co/elasticsearch/elasticsearch:5.2.2"
+    command: [/bin/bash, /entrypoint.sh]
+    cap_add:
+      - IPC_LOCK
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - "../container/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml"
+      - "../container/elasticsearch/data:/usr/share/elasticsearch/data"
+      - "../container/elasticsearch/entrypoint.sh:/entrypoint.sh"
+    environment:
+      - http.host=0.0.0.0
+      - transport.host=127.0.0.1
+      - bootstrap.memory_lock=true
+      - ELASTIC_USER_PASSWORD=${ELASTIC_PASSWORD}
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    networks:
+      - "backend-tier"
+
+  elk-logstash:
+    image: "docker.elastic.co/logstash/logstash:5.2.2"
+    links:
+      - elk-elasticsearch:elasticsearch
+    volumes:
+      - "../container/logstash/config/logstash.config:/usr/share/logstash/pipeline/logstash.config"
     ports:
       - "12201:12201/udp"
     environment:
-      VIRTUAL_PORT: 9000
-      VIRTUAL_HOST: graylog.${BASE_DOMAIN}
-      GRAYLOG_PASSWORD: ${GRAYLOG_ADMIN_PASSWORD}
+      ELASTIC_USER_PASSWORD: ${ELASTIC_PASSWORD}
     networks:
+      - "backend-tier"
+
+  elk-kibana:
+    image: "docker.elastic.co/kibana/kibana:5.2.2"
+    environment:
+      VIRTUAL_PORT: 5601
+      VIRTUAL_HOST: kibana.${BASE_DOMAIN}
+      SERVER_NAME: kibana.${BASE_DOMAIN}
+      ELASTICSEARCH_URL: "http://elasticsearch:9200"
+      ELASTICSEARCH_PASSWORD: ${ELASTIC_PASSWORD}
+    links:
+      - elk-elasticsearch:elasticsearch
+    networks:
+      - "backend-tier"
       - "frontend-tier"
 
 networks:
   frontend-tier:
     external:
       name: proxy
-
+  backend-tier:
+      driver: bridge

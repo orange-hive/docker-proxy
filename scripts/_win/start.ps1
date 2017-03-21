@@ -20,7 +20,7 @@ Write-Host "`nupdating container images if needed ..."
 Invoke-Expression "& { docker-compose -f docker-data\config\base\docker-compose.yml $ADDITIONAL_CONFIGFILE pull }"
 
 Write-Host "`nstarting proxy ..."
-Invoke-Expression "& { docker-compose -f docker-data\config\base\docker-compose.yml $ADDITIONAL_CONFIGFILE up -d }"
+Invoke-Expression "& { docker-compose -p proxy -f docker-data\config\base\docker-compose.yml $ADDITIONAL_CONFIGFILE up -d }"
 
 Write-Host "done`n"
 

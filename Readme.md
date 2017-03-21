@@ -4,18 +4,18 @@
 
 * Das aktulle Release unter Tags herunterladen (**nicht auschecken**)
 * Die Datei .env-dist nach .env kopieren und anpassen (**mindestens die `BASE_DOMAIN`**)
-* Die Datei docker-data/config-dist nach docker-data/config kopieren und anpassen wen nötig
+* Die Datei docker-data/config-dist nach docker-data/config kopieren und anpassen wen nï¿½tig
 
-Folgende Einstellungsmöglichkeiten gibt es:
+Folgende EinstellungsmÃ¶glichkeiten gibt es:
 
 * `PROXY_PORT`<br />
-    Der Port für den Proxy unter dem Web-Container erreichbar sind (nur um korrekt Links zu bauen)
+    Der Port fÃ¼r den Proxy unter dem Web-Container erreichbar sind (nur um korrekt Links zu bauen)
 
-* `GRAYLOG_ADMIN_PASSWORD`<br />
-    Das Passwort für die Graylog-Oberfläche
+* `ELASTIC_PASSWORD`<br />
+    Das Passwort fÃ¼r die Kibana-OberflÃ¤che (Benutzer ist elastic)
 
 * `BASE_DOMAIN`<br />
-    Die Domain for docker-ui und graylog
+    Die Domain for docker-ui und kibana
 
 
 ## Betrieb
