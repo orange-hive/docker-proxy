@@ -1,0 +1,7 @@
+version: '2'
+services:
+  nginx:
+    ports:
+      - "${PROXY_PORT_SSL}:443"
+
+

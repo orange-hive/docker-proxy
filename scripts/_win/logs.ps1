@@ -1,9 +1,9 @@
 
-if ("$args[0]" == "") {
-    $CONTAINER = "elk-logstash"
+if ($args[0]) {
+    $CONTAINER = $args[0]
 } else {
-    $CONTAINER = "$args[0]"
-fi
+    $CONTAINER = "elk-logstash"
+}
 
 if (Test-Path $env:CWD\docker-data\config\docker-compose.custom.yml) {
     Write-Host "adding custom configuration"

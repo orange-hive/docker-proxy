@@ -1,2 +1,11 @@
 .idea
 .env
+/docker-data/config-dist/container/nginx/vhosts/*
+!/docker-data/config-dist/container/nginx/vhosts/docker-ui_location
+/docker-data/config-dist/container/nginx/html/*
+!/docker-data/config-dist/container/nginx/html/.gitkeep
+/docker-data/config-dist/container/nginx/certs/*
+!/docker-data/config-dist/container/nginx/certs/.gitkeep
+!/docker-data/config-dist/container/nginx/certs/local.orangehive.de.*
+/docker-data/config-dist/container/elasticsearch/data/*
+!/docker-data/config-dist/container/elasticsearch/data/.gitkeep

@@ -11,6 +11,20 @@ for ( $i = 0; $i -lt $args.count; $i++ ) {
     }
 }
 
+if ($env:PROXY_PORT_SSL) {
+    Write-Host "adding ssl configuration"
+    $ADDITIONAL_CONFIGFILE = $ADDITIONAL_CONFIGFILE + " -f docker-data/config/base/docker-compose.ssl.yml"
+}
+
+if [ $env:LETSENCRYPT -eq "1" ]; then
+    if (-Not $env:PROXY_PORT_SSL) {
+        throw "PROXY_PORT_SSL not set, but needed for letsencrypt"
+    }
+    Write-Host "adding letsencrypt configuration"
+    ADDITIONAL_CONFIGFILE=$ADDITIONAL_CONFIGFILE + " -f docker-data/config/base/docker-compose.letsencrypt.yml"
+fi
+
+
 if (Test-Path $env:CWD\docker-data\config\docker-compose.custom.yml) {
     Write-Host "adding custom configuration"
     $ADDITIONAL_CONFIGFILE = $ADDITIONAL_CONFIGFILE + " -f docker-data\config\docker-compose.custom.yml"
