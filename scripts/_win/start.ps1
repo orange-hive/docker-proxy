@@ -16,7 +16,7 @@ if ($env:PROXY_PORT_SSL) {
     $ADDITIONAL_CONFIGFILE = $ADDITIONAL_CONFIGFILE + " -f docker-data/config/base/docker-compose.ssl.yml"
 }
 
-if [ $env:LETSENCRYPT -eq "1" ]; then
+if ($env:LETSENCRYPT -eq "1") {
     if (-Not $env:PROXY_PORT_SSL) {
         throw "PROXY_PORT_SSL not set, but needed for letsencrypt"
     }
