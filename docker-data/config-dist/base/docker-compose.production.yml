@@ -1,0 +1,16 @@
+version: '2'
+services:
+  nginx:
+    restart: always
+
+  ui:
+    restart: always
+
+  elk-elasticsearch:
+    restart: always
+
+  elk-logstash:
+    restart: always
+
+  elk-kibana:
+    restart: always

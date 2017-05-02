@@ -12,7 +12,7 @@ Folgende Einstellungsmöglichkeiten gibt es:
     Der Port für den Proxy unter dem Web-Container erreichbar sind (nur um korrekt Links zu bauen)
 
 * `ELASTIC_PASSWORD`<br />
-    Das Passwort für die Kibana-Oberfläche (Benutzer ist elastic)
+    Das Passwort für die Kibana-Oberfläche und auch für Docker-UI (Benutzer ist elastic)
 
 * `BASE_DOMAIN`<br />
     Die Domain for docker-ui und kibana

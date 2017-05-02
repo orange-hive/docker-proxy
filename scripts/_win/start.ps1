@@ -24,17 +24,29 @@ if ($env:LETSENCRYPT -eq "1") {
     ADDITIONAL_CONFIGFILE=$ADDITIONAL_CONFIGFILE + " -f docker-data/config/base/docker-compose.letsencrypt.yml"
 }
 
+if ($env:PRODUCTION -eq "1") {
+    Write-Host "adding production configuration"
+    ADDITIONAL_CONFIGFILE=$ADDITIONAL_CONFIGFILE + " -f docker-data/config/base/docker-compose.production.yml"
+}
 
 if (Test-Path $env:CWD\docker-data\config\docker-compose.custom.yml) {
     Write-Host "adding custom configuration"
     $ADDITIONAL_CONFIGFILE = $ADDITIONAL_CONFIGFILE + " -f docker-data\config\docker-compose.custom.yml"
 }
 
-Write-Host "`nupdating container images if needed ..."
-Invoke-Expression "& { docker-compose -f docker-data\config\base\docker-compose.yml $ADDITIONAL_CONFIGFILE pull }"
+if ($env:AUTOPULL -eq "1") {
+    Write-Host "`nupdating container images if needed ..."
+    Invoke-Expression "& { docker-compose -f docker-data\config\base\docker-compose.yml $ADDITIONAL_CONFIGFILE pull }"
+}
 
 Write-Host "`nstarting proxy ..."
+Out-File -Encoding ascii -FilePath docker-data\config\container\nginx\htpasswd\docker-ui
+Out-File -Encoding ascii -FilePath docker-data\config\container\nginx\htpasswd\kibana
 Invoke-Expression "& { docker-compose -p proxy -f docker-data\config\base\docker-compose.yml $ADDITIONAL_CONFIGFILE up -d }"
+
+Write-Host "`nsetting passwords ..."
+Invoke-Expression "& { docker-compose -p proxy -f docker-data\config\base\docker-compose.yml $ADDITIONAL_CONFIGFILE exec nginx /update-htpasswd.sh elastic "$env:ELASTIC_PASSWORD" "docker-ui.$env:BASE_DOMAIN }"
+Invoke-Expression "& { docker-compose -p proxy -f docker-data\config\base\docker-compose.yml $ADDITIONAL_CONFIGFILE exec nginx /update-htpasswd.sh elastic "$env:ELASTIC_PASSWORD" "kibana.$env:BASE_DOMAIN }"
 
 Write-Host "done`n"
 

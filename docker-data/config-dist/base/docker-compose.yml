@@ -8,8 +8,11 @@ services:
       - "../container/nginx/conf/docker_proxy.conf:/etc/nginx/conf.d/docker_proxy.conf:ro"
       - "../container/nginx/certs:/etc/nginx/certs:ro"
       - "../container/nginx/vhosts:/etc/nginx/vhost.d"
-      - "../container/nginx/vhosts/docker-ui_location:/etc/nginx/vhost.d/docker-ui.${BASE_DOMAIN}_location"
+      - "../container/nginx/vhosts_base/docker-ui_location:/etc/nginx/vhost.d/docker-ui.${BASE_DOMAIN}_location"
       - "../container/nginx/html:/usr/share/nginx/html"
+      - "../container/nginx/htpasswd/kibana:/etc/nginx/htpasswd/kibana.${BASE_DOMAIN}"
+      - "../container/nginx/htpasswd/docker-ui:/etc/nginx/htpasswd/docker-ui.${BASE_DOMAIN}"
+      - "../container/nginx/update-htpasswd.sh:/update-htpasswd.sh"
     ports:
       - "${PROXY_PORT}:80"
     networks:
@@ -27,7 +30,7 @@ services:
       - "frontend-tier"
 
   elk-elasticsearch:
-    image: "docker.elastic.co/elasticsearch/elasticsearch:5.2.2"
+    image: "docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION}"
     command: [/bin/bash, /entrypoint.sh]
     cap_add:
       - IPC_LOCK
@@ -39,9 +42,9 @@ services:
         soft: 65536
         hard: 65536
     volumes:
-      - "../container/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml"
       - "../container/elasticsearch/data:/usr/share/elasticsearch/data"
       - "../container/elasticsearch/entrypoint.sh:/entrypoint.sh"
+      - "../container/elasticsearch/license.json:/license.json"
     environment:
       - http.host=0.0.0.0
       - transport.host=127.0.0.1
@@ -52,7 +55,7 @@ services:
       - "backend-tier"
 
   elk-logstash:
-    image: "docker.elastic.co/logstash/logstash:5.2.2"
+    image: "docker.elastic.co/logstash/logstash:${ELK_VERSION}"
     links:
       - elk-elasticsearch:elasticsearch
     volumes:
@@ -65,7 +68,7 @@ services:
       - "backend-tier"
 
   elk-kibana:
-    image: "docker.elastic.co/kibana/kibana:5.2.2"
+    image: "docker.elastic.co/kibana/kibana:${ELK_VERSION}"
     environment:
       VIRTUAL_PORT: 5601
       VIRTUAL_HOST: kibana.${BASE_DOMAIN}
