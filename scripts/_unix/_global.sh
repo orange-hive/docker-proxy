@@ -10,6 +10,14 @@ if [ ! -d "$(pwd)/docker-data/config" ]; then
     exit
 fi
 
+if [ ! -f "$(pwd)/docker-data/config/container/elasticsearch/license.json" ]; then
+    echo "Elastic license File missing. Please create one. (docker-data/config/container/elasticsearch/license.json)"
+    exit
+fi
+
+# Setting permissions
+chmod -R 777 "$(pwd)/docker-data/config/container"
+
 # Read .env file
 loadENV() {
     local IFS=$'\n'

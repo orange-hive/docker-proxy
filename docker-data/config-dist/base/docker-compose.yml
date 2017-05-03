@@ -43,6 +43,8 @@ services:
         hard: 65536
     volumes:
       - "../container/elasticsearch/data:/usr/share/elasticsearch/data"
+      - "../container/elasticsearch/bin:/usr/local/bin"
+      - "../container/elasticsearch/update-license.sh:/update-license.sh"
       - "../container/elasticsearch/entrypoint.sh:/entrypoint.sh"
       - "../container/elasticsearch/license.json:/license.json"
     environment:
