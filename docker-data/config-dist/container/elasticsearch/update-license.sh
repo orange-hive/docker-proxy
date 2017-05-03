@@ -8,10 +8,12 @@ if [ -f /license.json ]; then
 
     check_status
 
-    while [[ "$STATUS" != "yellow" && "$STATUS" != "green" ]]; do
-        sleep 5
-        check_status
-    done
+    if [[ "$STATUS" != "401" ]]; then
+        while [[ "$STATUS" != "yellow" && "$STATUS" != "green" ]]; do
+            sleep 5
+            check_status
+        done
+    fi
 
     curl -u elastic:changeme \
         -XPUT 'localhost:9200/_xpack/license?acknowledge=true' -H 'Content-Type: application/json' \
