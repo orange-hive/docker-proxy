@@ -1,38 +1,64 @@
-# Anleitung
+# Instructions
 
 ## Installation
 
-* Das aktulle Release unter Tags herunterladen (**nicht auschecken**)
-* Die Datei .env-dist nach .env kopieren und anpassen (**mindestens die `BASE_DOMAIN`**)
-* Die Datei docker-data/config-dist nach docker-data/config kopieren und anpassen wen n�tig
+* Download the new release tag (**do not checkout master branch**)
+* Copy .env-dist to .env and configure it
+* Copy docker-data/config-dist to docker-data/config and configure it if necessary
 
-Folgende Einstellungsmöglichkeiten gibt es:
+Configuration in .env:
 
 * `PROXY_PORT`<br />
-    Der Port für den Proxy unter dem Web-Container erreichbar sind (nur um korrekt Links zu bauen)
+    Public port for nginx container
+
+* `PROXY_PORT_SSL`<br />
+    Public ssl port for nginx container
+
+* `LETSENCRYPT`<br />
+    Use Letsencrypt for ssl certificates (nginx ports have to be public accessible)
+
+* `ELK_VERSION`<br />
+    ELK Version to use (only 5.2.2 tested)
 
 * `ELASTIC_PASSWORD`<br />
-    Das Passwort für die Kibana-Oberfläche und auch für Docker-UI (Benutzer ist elastic)
+    Password for kibana and docker-ui webinterfaces (user: elastic)
+
+* `AUTOPULL`<br />
+    Update container images automatically on startup
+
+* `LICENSE_EMAIL`<br />
+    The email that gets expiring license information
+
+* `LICENSE_WARN_DAYS`<br />
+    Send expiring email if license is about to expire in LICENSE_WARN_DAYS days 
+
+* `PRODUCTION`<br />
+    Use production configuration
 
 * `BASE_DOMAIN`<br />
-    Die Domain for docker-ui und kibana
+    base domain for kibana and docker-ui (webinterfaces: kibana.$BASE_DOMAIN and docker-ui.$BASE_DOMAIN)
 
 
-## Betrieb
+## Usage
 
-Alle Kommandos befinden sich im Verzeichnis `bin`.
+There are the following commands:
 
-Folgende Kommandos gibt es:
-
-* `./control.cmd start` (OSX) / `control.cmd start` (Win)<br />
-    Zum starten der Services.
+* `./control.cmd start` (Unix) / `control.cmd start` (Win)<br />
+    start services
  
-* `./control.cmd stop` (OSX) / `control.cmd stop` (Win)<br />
-    Zum Beenden der Services.
+* `./control.cmd stop` (Unix) / `control.cmd stop` (Win)<br />
+    stop services.
+
+* `./control.cmd pull` (Unix) / `control.cmd pull` (Win)<br />
+    download new container images if available.
+
+* `./control.cmd logs` (Unix) / `control.cmd logs` (Win)<br />
+    show logs<br />
+    default is elk-logstash, but you can see logs of the folloging container:
+    nginx, elk-elasticsearch, elk-logstash, elk-kibana
   
-* `./control.cmd logs` (OSX) / `control.cmd logs` (Win)<br />
-    Zum Anzeigen der Logs, wenn mit -d gestartet
+* `./control.cmd update-docker-proxy` (Unix) / `control.cmd update-docker-proxy` (Win)<br />
+    update to new docker-proxy-template
   
-* `./control.cmd update-docker-proxy` (OSX) / `control.cmd update-docker-proxy` (Win)<br />
-    Zum updaten dieses Systems
-  
+* `./control.cmd update-license` (Unix) / `control.cmd update-license` (Win)<br />
+    activate new license located under docker-data/config/container/elasticsearch/license.json
