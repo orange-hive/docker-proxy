@@ -45,8 +45,8 @@ Out-File -Encoding ascii -FilePath docker-data\config\container\nginx\htpasswd\k
 Invoke-Expression "& { docker-compose -p proxy -f docker-data\config\base\docker-compose.yml $ADDITIONAL_CONFIGFILE up -d }"
 
 Write-Host "`nsetting passwords ..."
-Invoke-Expression "& { docker-compose -p proxy -f docker-data\config\base\docker-compose.yml $ADDITIONAL_CONFIGFILE exec nginx /update-htpasswd.sh elastic "$env:ELASTIC_PASSWORD" "docker-ui.$env:BASE_DOMAIN }"
-Invoke-Expression "& { docker-compose -p proxy -f docker-data\config\base\docker-compose.yml $ADDITIONAL_CONFIGFILE exec nginx /update-htpasswd.sh elastic "$env:ELASTIC_PASSWORD" "kibana.$env:BASE_DOMAIN }"
+Invoke-Expression "& { docker-compose -p proxy -f docker-data\config\base\docker-compose.yml $ADDITIONAL_CONFIGFILE exec nginx /update-htpasswd.sh elastic `"$env:ELASTIC_PASSWORD`" `"docker-ui.$env:BASE_DOMAIN`" }"
+Invoke-Expression "& { docker-compose -p proxy -f docker-data\config\base\docker-compose.yml $ADDITIONAL_CONFIGFILE exec nginx /update-htpasswd.sh elastic `"$env:ELASTIC_PASSWORD`" `"kibana.$env:BASE_DOMAIN`" }"
 
 Write-Host "done`n"
 
