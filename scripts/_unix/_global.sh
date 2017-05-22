@@ -16,7 +16,7 @@ if [ ! -f "$(pwd)/docker-data/config/container/elasticsearch/license.json" ]; th
 fi
 
 # Setting permissions
-chmod -R 777 docker-data/config/container/*
+chmod -R 777 docker-data/config/container/* 2> /dev/null
 
 # Read .env file
 loadENV() {
