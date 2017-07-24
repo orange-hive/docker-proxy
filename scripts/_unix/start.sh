@@ -30,7 +30,7 @@ if [ "$LETSENCRYPT" == "1" ]; then
     ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/base/docker-compose.letsencrypt.yml"
 fi
 
-if [ "$PRODUCTION" == "1" ]; then
+if [ "$DEBUGMODE" == 0 ] && [ "$PRODUCTION" == "1" ]; then
     echo "adding production configuration"
     ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/base/docker-compose.production.yml"
 fi
@@ -50,15 +50,17 @@ echo "" > docker-data/config/container/nginx/htpasswd/docker-ui
 echo "" > docker-data/config/container/nginx/htpasswd/kibana
 docker-compose -p proxy -f docker-data/config/base/docker-compose.yml $ADDITIONAL_CONFIGFILE up -d
 
-printf "\nsetting passwords ...\n"
-docker-compose -p proxy -f docker-data/config/base/docker-compose.yml $ADDITIONAL_CONFIGFILE exec nginx /update-htpasswd.sh elastic "$ELASTIC_PASSWORD" "docker-ui.$BASE_DOMAIN"
-docker-compose -p proxy -f docker-data/config/base/docker-compose.yml $ADDITIONAL_CONFIGFILE exec nginx /update-htpasswd.sh elastic "$ELASTIC_PASSWORD" "kibana.$BASE_DOMAIN"
+if [ $DEBUGMODE == "0" ]; then
+    printf "\nsetting passwords ...\n"
+    docker-compose -p proxy -f docker-data/config/base/docker-compose.yml $ADDITIONAL_CONFIGFILE exec nginx /update-htpasswd.sh elastic "$ELASTIC_PASSWORD" "docker-ui.$BASE_DOMAIN"
+    docker-compose -p proxy -f docker-data/config/base/docker-compose.yml $ADDITIONAL_CONFIGFILE exec nginx /update-htpasswd.sh elastic "$ELASTIC_PASSWORD" "kibana.$BASE_DOMAIN"
 
-printf "\nadding license check cronjob ...\n"
-crontab -l | grep -v "# docker proxy" > temp_crontab
-echo "0 0 * * * \"$(pwd)/control.cmd\" check-license # docker proxy" > temp_crontab
-crontab temp_crontab
-rm temp_crontab
+    printf "\nadding license check cronjob ...\n"
+    crontab -l | grep -v "# docker proxy" > temp_crontab
+    echo "0 0 * * * \"$(pwd)/control.cmd\" check-license # docker proxy" > temp_crontab
+    crontab temp_crontab
+    rm temp_crontab
+fi
 
 printf "done\n\n"
 
