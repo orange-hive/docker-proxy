@@ -1,20 +1,6 @@
 #!/bin/sh
 
-DEBUGMODE=0
 ADDITIONAL_CONFIGFILE=""
-for PARAMETER in "$@"; do
-    case "$PARAMETER" in
-        "-d")
-            ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/base/docker-compose.debug.yml"
-            DEBUGMODE=1
-            printf "***DEBUGMODE***\n\n"
-            ;;
-        *)
-            echo "invalid parameter $PARAMETER"
-            exit
-            ;;
-    esac
-done
 
 if [ ! -z "$PROXY_PORT_SSL" ]; then
     echo "adding ssl configuration"
@@ -30,7 +16,7 @@ if [ "$LETSENCRYPT" == "1" ]; then
     ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/base/docker-compose.letsencrypt.yml"
 fi
 
-if [ "$DEBUGMODE" == 0 ] && [ "$PRODUCTION" == "1" ]; then
+if [ "$PRODUCTION" == "1" ]; then
     echo "adding production configuration"
     ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/base/docker-compose.production.yml"
 fi
@@ -50,7 +36,7 @@ echo "" > docker-data/config/container/nginx/htpasswd/docker-ui
 echo "" > docker-data/config/container/nginx/htpasswd/kibana
 docker-compose -p proxy -f docker-data/config/base/docker-compose.yml $ADDITIONAL_CONFIGFILE up -d
 
-if [ $DEBUGMODE == "0" ]; then
+if [ "$PRODUCTION" == "1" ]; then
     printf "\nsetting passwords ...\n"
     docker-compose -p proxy -f docker-data/config/base/docker-compose.yml $ADDITIONAL_CONFIGFILE exec nginx /update-htpasswd.sh elastic "$ELASTIC_PASSWORD" "docker-ui.$BASE_DOMAIN"
     docker-compose -p proxy -f docker-data/config/base/docker-compose.yml $ADDITIONAL_CONFIGFILE exec nginx /update-htpasswd.sh elastic "$ELASTIC_PASSWORD" "kibana.$BASE_DOMAIN"

@@ -7,10 +7,62 @@ services:
     restart: always
 
   elk-elasticsearch:
+    image: "docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION}"
+    command: [/bin/bash, /entrypoint.sh]
+    cap_add:
+      - IPC_LOCK
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - "../container/elasticsearch/data:/usr/share/elasticsearch/data"
+      - "../container/elasticsearch/bin:/usr/local/bin"
+      - "../container/elasticsearch/update-license.sh:/update-license.sh"
+      - "../container/elasticsearch/entrypoint.sh:/entrypoint.sh"
+      - "../container/elasticsearch/license.json:/license.json"
+    environment:
+      - http.host=0.0.0.0
+      - transport.host=127.0.0.1
+      - bootstrap.memory_lock=true
+      - ELASTIC_USER_PASSWORD=${ELASTIC_PASSWORD}
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    networks:
+      - "backend-tier"
     restart: always
 
   elk-logstash:
+    image: "docker.elastic.co/logstash/logstash:${ELK_VERSION}"
+    links:
+      - elk-elasticsearch:elasticsearch
+    volumes:
+      - "../container/logstash/config/logstash.config:/usr/share/logstash/pipeline/logstash.config"
+    ports:
+      - "12201:12201/udp"
+    environment:
+      ELASTIC_USER_PASSWORD: ${ELASTIC_PASSWORD}
+    networks:
+      - "backend-tier"
     restart: always
 
   elk-kibana:
+    image: "docker.elastic.co/kibana/kibana:${ELK_VERSION}"
+    environment:
+      VIRTUAL_PORT: 5601
+      VIRTUAL_HOST: kibana.${BASE_DOMAIN}
+      SERVER_NAME: kibana.${BASE_DOMAIN}
+      ELASTICSEARCH_URL: "http://elasticsearch:9200"
+      ELASTICSEARCH_PASSWORD: ${ELASTIC_PASSWORD}
+    links:
+      - elk-elasticsearch:elasticsearch
+    networks:
+      - "backend-tier"
+      - "frontend-tier"
     restart: always
+
+networks:
+  backend-tier:
+      driver: bridge
