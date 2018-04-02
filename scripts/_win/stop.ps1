@@ -12,7 +12,7 @@ if (Test-Path "$env:CWD\docker-data\config\docker-compose.custom.yml") {
     $ADDITIONAL_CONFIGFILE = "$ADDITIONAL_CONFIGFILE -f docker-data\config\docker-compose.custom.yml"
 }
 
-docker-compose -p proxy -f docker-data\config\base\docker-compose.yml -f docker-data\config\base\docker-compose.debug.yml $ADDITIONAL_CONFIGFILE down
+docker-compose --no-ansi -p proxy -f docker-data\config\base\docker-compose.yml -f docker-data\config\base\docker-compose.debug.yml $ADDITIONAL_CONFIGFILE down
 Out-File -Encoding ascii -FilePath docker-data\config\container\nginx\htpasswd\docker-ui
 Out-File -Encoding ascii -FilePath docker-data\config\container\nginx\htpasswd\kibana
 

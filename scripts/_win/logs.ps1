@@ -10,6 +10,6 @@ if (Test-Path $env:CWD\docker-data\config\docker-compose.custom.yml) {
     $ADDITIONAL_CONFIGFILE = $ADDITIONAL_CONFIGFILE + " -f docker-data\config\docker-compose.custom.yml"
 }
 
-Invoke-Expression "& { docker-compose -p proxy -f docker-data\config\base\docker-compose.yml $ADDITIONAL_CONFIGFILE logs -f --tail='50' $CONTAINER }"
+Invoke-Expression "& { docker-compose --no-ansi -p proxy -f docker-data\config\base\docker-compose.yml $ADDITIONAL_CONFIGFILE logs -f --tail='50' $CONTAINER }"
 
 exit
