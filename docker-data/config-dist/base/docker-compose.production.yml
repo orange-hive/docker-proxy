@@ -56,8 +56,8 @@ services:
     links:
       - elk-elasticsearch:elasticsearch
     networks:
+      - "default"
       - "backend-tier"
-      - "frontend-tier"
     restart: always
 
 networks:

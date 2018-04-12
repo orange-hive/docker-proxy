@@ -9,7 +9,5 @@ services:
       - "../container/nginx/certs:/etc/nginx/certs:rw"
     volumes_from:
       - "nginx"
-    networks:
-      - "frontend-tier"
 
 
