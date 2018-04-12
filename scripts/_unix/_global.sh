@@ -22,7 +22,7 @@ loadENV() {
 }
 loadENV
 
-if [ ! -f "$(pwd)/docker-data/config/container/elasticsearch/license.json" ]; then
+if [ "$PRODUCTION" == "1" ] && [ ! -f "$(pwd)/docker-data/config/container/elasticsearch/license.json" ]; then
     echo "Elastic license File missing. Please create one. (docker-data/config/container/elasticsearch/license.json)"
     exit
 fi

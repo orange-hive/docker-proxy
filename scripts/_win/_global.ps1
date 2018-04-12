@@ -16,7 +16,7 @@ foreach ($line in $lines) {
     }
 }
 
-if (-Not (Test-Path "$env:CWD\docker-data\config\container\elasticsearch\license.json")) {
+if ($env:PRODUCTION -eq "1" -And -Not (Test-Path "$env:CWD\docker-data\config\container\elasticsearch\license.json")) {
     throw "Elastic license File missing. Please create one. (docker-data\config\container\elasticsearch\license.json)"
 }
 

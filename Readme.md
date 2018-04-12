@@ -3,8 +3,7 @@
 ## Installation
 
 * Download the new release tag (**do not checkout master branch**)
-* Copy .env-dist to .env and configure it
-* Copy docker-data/config-dist to docker-data/config and configure it if necessary
+* Start setup with: `./control.cmd setup` (Unix) / `control.cmd setup`
 
 Configuration in .env:
 
