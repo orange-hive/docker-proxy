@@ -1,17 +1,12 @@
 #!/bin/sh
 
 if [ ! -f "$(pwd)/.env" ]; then
-    echo "Environment File missing. Rename .env-dist to .env and customize it before starting this project."
+    echo "Environment File missing. Use setup command to create it."
     exit
 fi
 
 if [ ! -d "$(pwd)/docker-data/config" ]; then
-    echo "docker-data/config is missing. Rename docker-data/config-dist to docker-data/config and customize it before starting this project."
-    exit
-fi
-
-if [ ! -f "$(pwd)/docker-data/config/container/elasticsearch/license.json" ]; then
-    echo "Elastic license File missing. Please create one. (docker-data/config/container/elasticsearch/license.json)"
+    echo "docker-data/config is missing. Use setup command to create it."
     exit
 fi
 
@@ -27,8 +22,12 @@ loadENV() {
 }
 loadENV
 
-ADDITIONAL_CONFIGFILE=""
+if [ ! -f "$(pwd)/docker-data/config/container/elasticsearch/license.json" ]; then
+    echo "Elastic license File missing. Please create one. (docker-data/config/container/elasticsearch/license.json)"
+    exit
+fi
 
+ADDITIONAL_CONFIGFILE=""
 if [ ! -z "$PROXY_PORT_SSL" ]; then
     echo "adding ssl configuration"
     ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/base/docker-compose.ssl.yml"

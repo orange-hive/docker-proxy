@@ -1,29 +1,4 @@
 
-$ADDITIONAL_CONFIGFILE = ""
-
-if ($env:PROXY_PORT_SSL) {
-    Write-Host "adding ssl configuration"
-    $ADDITIONAL_CONFIGFILE = $ADDITIONAL_CONFIGFILE + " -f docker-data/config/base/docker-compose.ssl.yml"
-}
-
-if ($env:LETSENCRYPT -eq "1") {
-    if (-Not $env:PROXY_PORT_SSL) {
-        throw "PROXY_PORT_SSL not set, but needed for letsencrypt"
-    }
-    Write-Host "adding letsencrypt configuration"
-    ADDITIONAL_CONFIGFILE=$ADDITIONAL_CONFIGFILE + " -f docker-data/config/base/docker-compose.letsencrypt.yml"
-}
-
-if ($env:PRODUCTION -eq "1") {
-    Write-Host "adding production configuration"
-    ADDITIONAL_CONFIGFILE=$ADDITIONAL_CONFIGFILE + " -f docker-data/config/base/docker-compose.production.yml"
-}
-
-if (Test-Path $env:CWD\docker-data\config\docker-compose.custom.yml) {
-    Write-Host "adding custom configuration"
-    $ADDITIONAL_CONFIGFILE = $ADDITIONAL_CONFIGFILE + " -f docker-data\config\docker-compose.custom.yml"
-}
-
 if ($env:AUTOPULL -eq "1") {
     Write-Host "`nupdating container images if needed ..."
     Invoke-Expression "& { docker-compose --no-ansi -f docker-data\config\base\docker-compose.yml $ADDITIONAL_CONFIGFILE pull }"
