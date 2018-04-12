@@ -1,31 +1,5 @@
 #!/bin/sh
 
-ADDITIONAL_CONFIGFILE=""
-
-if [ ! -z "$PROXY_PORT_SSL" ]; then
-    echo "adding ssl configuration"
-    ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/base/docker-compose.ssl.yml"
-fi
-
-if [ "$LETSENCRYPT" == "1" ]; then
-    if [ -z "$PROXY_PORT_SSL" ]; then
-        echo "PROXY_PORT_SSL not set, but needed for letsencrypt"
-        exit
-    fi
-    echo "adding letsencrypt configuration"
-    ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/base/docker-compose.letsencrypt.yml"
-fi
-
-if [ "$PRODUCTION" == "1" ]; then
-    echo "adding production configuration"
-    ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/base/docker-compose.production.yml"
-fi
-
-if [ -f "$(pwd)/docker-data/config/docker-compose.custom.yml" ]; then
-    echo "adding custom configuration"
-    ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/docker-compose.custom.yml"
-fi
-
 if [ $AUTOPULL == "1" ]; then
     printf "updating container images if needed ...\n"
     docker-compose -f docker-data/config/base/docker-compose.yml $ADDITIONAL_CONFIGFILE pull | grep '^Status'

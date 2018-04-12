@@ -20,9 +20,11 @@ if [ ! -e "$CWD/scripts/_unix/$COMMAND.sh" ]; then
 fi
 
 # setting permissions
-chmod 755 scripts/_unix/*.sh 2> /dev/null
+chmod 755 scripts/_unix/*.sh 2>/dev/null
 
-. scripts/_unix/_global.sh
+if [ ! $COMMAND == "short_help" ] || [ ! $COMMAND == "setup" ]; then
+    . scripts/_unix/_global.sh
+fi
 . scripts/_unix/$COMMAND.sh
 
 cd "$OLDCWD"
@@ -46,7 +48,13 @@ IF NOT EXIST "%cd%\scripts\_win\%COMMAND%.ps1" (
 
 FOR /F "tokens=1,* delims= " %%a IN ("%*") DO SET ARGS=%%b
 
-PowerShell -NoProfile -ExecutionPolicy Bypass -Command "& { try { . "%cd%\scripts\_win\_global.ps1"; "%cd%\scripts\_win\%COMMAND%.ps1" %ARGS% } catch { Write-Host "$_.Exception.Message" } }"
+IF "%COMMAND%" EQU "short_help" (
+    PowerShell -NoProfile -ExecutionPolicy Bypass -Command "& { try { "%cd%\scripts\_win\%COMMAND%.ps1" %ARGS% } catch { Write-Host "$_.Exception.Message" } }"
+) ELSE IF "%COMMAND%" EQU "setup" (
+    PowerShell -NoProfile -ExecutionPolicy Bypass -Command "& { try { "%cd%\scripts\_win\%COMMAND%.ps1" %ARGS% } catch { Write-Host "$_.Exception.Message" } }"
+) ELSE (
+    PowerShell -NoProfile -ExecutionPolicy Bypass -Command "& { try { . "%cd%\scripts\_win\_global.ps1"; "%cd%\scripts\_win\%COMMAND%.ps1" %ARGS% } catch { Write-Host "$_.Exception.Message" } }"
+)
 
 CD "%OLDCWD%"
 EXIT /B
