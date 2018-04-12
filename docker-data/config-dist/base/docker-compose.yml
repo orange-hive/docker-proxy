@@ -1,4 +1,4 @@
-version: '3'
+version: '3.5'
 services:
   nginx:
     image: jwilder/nginx-proxy
@@ -37,5 +37,5 @@ services:
 
 networks:
   default:
-    external:
-      name: proxy
+    driver: bridge
+    name: proxy
