@@ -1,8 +1,5 @@
 version: '3.5'
 services:
-  ui:
-    restart: no
-
   elk-elasticsearch:
     image: "docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION}"
     command: [/bin/bash, /entrypoint.sh]
@@ -25,7 +22,7 @@ services:
       - http.host=0.0.0.0
       - transport.host=127.0.0.1
       - bootstrap.memory_lock=true
-      - ELASTIC_USER_PASSWORD=${ELASTIC_PASSWORD}
+      - ELASTIC_USER_PASSWORD=${GUI_PASSWORD}
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     networks:
       - "backend-tier"
@@ -40,7 +37,7 @@ services:
     ports:
       - "12201:12201/udp"
     environment:
-      ELASTIC_USER_PASSWORD: ${ELASTIC_PASSWORD}
+      ELASTIC_USER_PASSWORD: ${GUI_PASSWORD}
     networks:
       - "backend-tier"
     restart: always
@@ -52,7 +49,7 @@ services:
       VIRTUAL_HOST: kibana.${BASE_DOMAIN}
       SERVER_NAME: kibana.${BASE_DOMAIN}
       ELASTICSEARCH_URL: "http://elasticsearch:9200"
-      ELASTICSEARCH_PASSWORD: ${ELASTIC_PASSWORD}
+      ELASTICSEARCH_PASSWORD: ${GUI_PASSWORD}
     links:
       - elk-elasticsearch:elasticsearch
     networks:

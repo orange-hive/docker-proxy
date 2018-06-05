@@ -12,8 +12,6 @@ docker-compose -p proxy -f docker-data/config/base/docker-compose.yml $ADDITIONA
 
 if [ "$PRODUCTION" == "1" ]; then
     printf "\nsetting passwords ...\n"
-    docker-compose -p proxy -f docker-data/config/base/docker-compose.yml $ADDITIONAL_CONFIGFILE exec nginx /update-htpasswd.sh elastic "$ELASTIC_PASSWORD" "docker-ui.$BASE_DOMAIN"
-    docker-compose -p proxy -f docker-data/config/base/docker-compose.yml $ADDITIONAL_CONFIGFILE exec nginx /update-htpasswd.sh elastic "$ELASTIC_PASSWORD" "kibana.$BASE_DOMAIN"
 
     printf "\nadding license check cronjob ...\n"
     crontab -l | grep -v "# docker proxy" > temp_crontab
