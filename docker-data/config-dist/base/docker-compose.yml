@@ -3,6 +3,8 @@ services:
   nginx:
     image: jwilder/nginx-proxy
     container_name: nginx-proxy
+    environment:
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock:ro"
       - "../container/nginx/conf/docker_proxy.conf:/etc/nginx/conf.d/docker_proxy.conf:ro"
@@ -18,8 +20,9 @@ services:
     restart: always
 
   ui:
-    image: uifd/ui-for-docker
-    container_name: ui-for-docker
+    #image: uifd/ui-for-docker
+    image: portainer/portainer
+    container_name: docker-ui
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
@@ -27,8 +30,9 @@ services:
       VIRTUAL_HOST: docker-ui.${BASE_DOMAIN}
     restart: always
 
-  elk-logstash:
+  logstash:
     image: svenwltr/console-gelf-server
+    container_name: logstash
     links: []
     volumes: []
     ports:

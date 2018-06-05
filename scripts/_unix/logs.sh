@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [[ "$1" == "" ]]; then
-    CONTAINER="elk-logstash"
+    CONTAINER="logstash"
 else
     CONTAINER="$1"
 fi
