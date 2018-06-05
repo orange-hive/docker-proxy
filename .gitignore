@@ -1,6 +1,5 @@
 .idea
 .env
-/docker-data/config-dist/container/nginx/vhosts/*
 /docker-data/config-dist/container/nginx/html/*
 !/docker-data/config-dist/container/nginx/html/.gitkeep
 /docker-data/config-dist/container/nginx/certs/*
